@@ -16,9 +16,11 @@ pipeline {
     stage('Install & Test Backend') {
       steps {
         dir("${BACKEND_DIR}") {
-          docker.image('node:18').inside {
-            sh 'npm install'
-            sh 'npm test'
+          script {
+            docker.image('node:18').inside {
+              sh 'npm install'
+              sh 'npm test'
+            }
           }
         }
       }
@@ -27,9 +29,11 @@ pipeline {
     stage('Install & Test Frontend') {
       steps {
         dir("${FRONTEND_DIR}") {
-          docker.image('node:18').inside {
-            sh 'npm install'
-            // add frontend tests here
+          script {
+            docker.image('node:18').inside {
+              sh 'npm install'
+              // You can add frontend tests here later
+            }
           }
         }
       }
