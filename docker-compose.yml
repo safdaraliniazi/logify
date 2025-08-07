@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.13
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+
+  backend:
+    build: ./backend
+    container_name: logify-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+    depends_on:
+      - elasticsearch
+
+  frontend:
+    build: ./frontend
+    container_name: logify-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND_URL=http://localhost:5000
+    depends_on:
+      - backend
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: logify-jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  jenkins_home:
